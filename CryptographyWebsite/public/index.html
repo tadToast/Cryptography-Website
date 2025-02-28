@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link type="text/css" rel="stylesheet" href="style.css">
+    <script src="othe.js" defer></script>
+</head>
+<body>
+    <header>
+        <nav class="horizontal-scroll">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="Background.html">Early Cryptography</a></li>
+                <li><a href="keyExchange.html">Symmetric Key Exchange</a></li>
+                <li><a href="publicKey.html">Public Key</a></li>
+                <li><a href="ElipticCurve.html">Elliptic Curve</a></li>
+                <li><a href="PostQ.html">Post Quantum</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <h1>Overview</h1>
+    <p>
+        <img class="right" src="imgs/encryption.jpg" alt="Encryption picture">
+        The point of this website is to show off some of the crypto systems out there and to inform on the
+        algorithms involved in them. This website will only cover a few of the big algorithms and will try to provide
+        an example of each. Some of the more modern systems are going to be hard to understand but hopefully each explanation
+        can be understood.
+    </p>
+    <P>
+        <img src="imgs/nordVPNCrypto.png" alt="Nord vpn simple picture">
+
+        Most examples were created by me but some are from other people, mostly in the quantum tab. Each page has all sources used to
+        create the page. I do not explain every aspect on how each example works, but let it be known that generally the covered systems
+        work because we can find an inverse of what we did. For example, you can find an inverse for certain numbers modulo a number
+        and you can find the inverse of some matrix given it has an inverse(not all matrices are invertible).
+        I would also like to thank Mark Spanier for helping me with some of the crypto systems and giving me good
+        resources to explore.
+
+    </P>
+    <p>
+        Thank you for visiting.
+    </p>
+
+    <form id="rev">
+        <p><label for="review">Leave me a review of the website:</label></p>
+        <textarea id="review" name="review" rows="4" cols="50"></textarea>
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+    <error id="error"></error>
+
+    <script src="othe.js"></script>
+</body>
+</html>
+
+

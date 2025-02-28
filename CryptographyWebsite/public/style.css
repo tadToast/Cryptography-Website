@@ -1,0 +1,220 @@
+
+body {
+    padding: 0;
+    color:white;
+    background-color: rgb(20, 20, 20);;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-size: 20px;
+}
+
+error{
+    font-size: 15px;
+    color:red;
+}
+.container {
+    float: right;
+    margin-right: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.square-box {
+    float: right;
+    width: 200px;
+    height: 200px;
+    background-color: rgb(26, 2, 9);
+    border: 2px solid rgb(0, 0, 0);
+    padding: 10px;
+    box-sizing: border-box;
+}
+
+.square-box p {
+    margin: 0;
+}
+aside{
+    flex: 1;
+     background-color: #480c0c;  
+    border-radius: 2px;
+    border: 2px solid #230f0f;
+    text-align: center;
+     display: block; 
+    margin: 100px auto;
+}
+
+
+main {
+    
+    flex: 1;
+    padding: 20px;
+}
+
+ img {
+    max-width: 20vw; 
+    flex: 1;
+    border: 3px solid #2b7fbe8d;
+    background-color: #340680;  
+    display: block; 
+    float: left; /* Float the image to the left */
+    margin-right: 1em; /* Add some space between the image and text */
+    margin-bottom: 1em; 
+}
+.right {
+    max-width: 25vw; 
+    flex: 1;
+    border: 3px solid #2b7fbe8d;
+    background-color: #340680;    
+    display: block; 
+    float: right; /* Float the image to the left */
+    margin-right: 1em; /* Add some space between the image and text */
+    margin-bottom: 1em; 
+}
+
+
+article h1{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+footer{
+    margin: 0;
+    border: 1px dotted white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    bottom: 0;
+    width: 100%;
+    padding: 10px;
+    
+}
+
+footer ul {
+    list-style: none;
+    padding: 0;
+    flex-wrap: wrap;
+}
+footer li{
+    padding: 5px;
+}
+
+footer ul li {
+  
+    margin-bottom: 10px;
+}
+nav{
+    padding: 10px 20px;
+    background-color: rgb(49, 2, 2);
+    
+}
+nav ul{
+    display: flex;
+    flex: auto;
+    list-style: none;
+    justify-content: center;
+    
+}
+nav li{
+    padding: 10px;
+}
+nav a{
+    text-decoration: none;
+    color:greenyellow;
+}
+
+
+
+table, th, td {
+  border:1px solid white;
+
+}
+.flex-container {
+display: flex;
+align-items: center; 
+}
+
+.inline-table {
+width: auto;
+margin: 0; 
+}
+
+table {
+margin: 0; 
+padding: 0; 
+border-collapse: collapse; 
+}
+
+.vector {
+margin: 0;
+}
+
+.operator {
+margin: 0; 
+margin-right: 10px; 
+margin-left: 10px; 
+}
+
+p{
+    /* margin: 2% */
+    margin-left: 20px; 
+    margin-right: 20px; 
+}
+.example{
+    white-space: nowrap;
+}
+
+
+
+@media only screen and (max-width:800px){
+    main {
+        flex-direction: column; 
+        align-items: center;
+      }
+      body{
+        font-size: 18px;
+      }
+    
+      footer {
+        order: 2; 
+        width: 100%; 
+        margin-top: 20px; 
+      }
+}
+
+@media only screen and (max-width: 500px) {
+
+    img{
+        max-width: 30vh;
+    }
+    .right{
+        max-width: 30vh;
+    }
+    .horizontal-scroll {
+        overflow-x: auto; /* Enable horizontal scrolling */
+        white-space: nowrap; /* Prevent items from wrapping to the next line */
+        padding-left: 5%; /* Add left padding to ensure the first link is reachable */
+      }
+      .horizontal-scroll ul {
+        list-style-type: none; /* Remove default list styles */
+        padding: 0;
+        margin: 0;
+        display: flex; /* Use flexbox for horizontal alignment */
+      }
+      
+      .horizontal-scroll li {
+        margin-right: 10px; /* Adjust spacing between items */
+      }
+      
+      .horizontal-scroll a {
+        display: block;
+        padding: 10px;
+        color: white;
+        background-color: #333;
+        text-decoration: none;
+      }
+      
+  
+    footer {
+      flex-direction: column; 
+    }
+  }

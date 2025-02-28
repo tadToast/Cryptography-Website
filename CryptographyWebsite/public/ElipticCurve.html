@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link type="text/css" rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1" >
+    <title>Elliptic Curve</title>
+    <script src="main.js" defer></script>
+</head>
+
+<header>
+  <nav class="horizontal-scroll">
+      <ul>
+          <li> <a href="index.html">Home </a> </li>
+          <li> <a href="Background.html">Early Cryptography </a> </li>
+          <li> <a href="keyExchange.html">Symmetric Key Exchange </a> </li>
+          <li> <a href="publicKey.html">Public Key </a> </li>
+          <li> <a href="ElipticCurve.html">Elliptic Curve </a> </li>
+          <li> <a href="PostQ.html">Post Quantum  </a> </li>
+      </ul>
+  </nav>
+</header>
+
+<body>
+    
+    <h1> Overview</h1>
+    <p> 
+        Elliptic Curves are used mostly in public key cryptography. The elliptic curve comes in the form 
+        y^2 = x^3 + A*x where A and B are constants. You can then mod the result by a number P and work form there. 
+        Elliptic Curves are one of the most secure methods right now but are at risk of being solved quantum computing.
+        Fun Fact: The block chain uses elliptic curve cryptography for their crypto system(the last one covered on this page).
+    </p>
+    <P>
+      <img src="https://www.globalsign.com/application/files/4916/0389/7496/Elliptic-Curve-Cryptography.png" alt="elliptic curve">
+        The bases for an elliptic curve encryption come from the fact that an elliptic curve is symmetric and that if you have two points 
+        you can draw a line throw the two points and get a third point even if the two points are the same point. Most algorithms are 
+        going to use some sort of point addition and point multiplication. The point addition is either creating an ll variable that is equal 
+        to (y2 - y1) * (x2-x1)^-1 mod p (based on the distance formal) if the points are different or ll variable is equal to (3*x1^2 + A) * (2*y1)^-1 mod p if adding the same points.
+        This algorithm is then used in multiplication such that x * P(some point) is equal to another point. This is usually done with a 
+        double and add algorithm. This algorithm works by having a starting point and a number you want to multiply by. 
+        These are then used in a while loop that checks to see if n%2 =1, if it is you add your point R and a point Q, if Q is not set yet, it is 
+        your starting point R, and setting the result equal to R. After the calculations, you set Q equal to Q+Q using the add algorithm, n is then divided by 2 (taking the floor of the result)
+        and starting the loop again. <br>
+        <br>
+        these algorithms look like:<br><br>
+        <div class="example">
+    if (x1 == x2 and y1 == y2):<br>
+        ____ll = ((3*x1^2 + A)*inverse_mod(2*y1,p))%p<br>
+    else:<br>
+       ____ ll = ((y2 - y1)*inverse_mod(x2 - x1,p))%p<br>
+    x3 = (ll^2 - x1 - x2)%p<br>
+    y3 = (ll*(x1 - x3) - y1)%p<br>
+    return (x3 , y3)<br><br>
+    above is a part of a elliptic curve point addition algorithm.<br><br>
+    while (n > 0):<br>
+_if n%2 == 1:<br>
+   ___ R = ECaddP(A,B,p,R,Q)<br>
+_Q = ECaddP(A,B,p,Q,Q)<br>
+_n = floor(n/2)<br><br>
+</div>
+return R<br>
+above is a snip of the point multiplication written in sage(based in python). Q = P to begin with, P is the point you are trying to multiple, and n is how many times you 
+want to multiply it. ECaddP is elliptic curve addition function call.
+    </P>
+
+    <h2>Diffie-Hellman</h2>
+    <P>
+      You can use the elliptic curve to do the Diffie Hellman shared key generator in a slightly different way. 
+      This way is more secure because it is harder to solve the discreet log problem on an elliptic curve than it is 
+      with polynomials. <br>
+      The encryption works by starting with a shared elliptic curve and a shared prime as well as a point that is shared. 
+      Bob and Alice (receiver and sender) going to come up with a private key for each that is not shared and use their key to multiple 
+      the shared point and share that. Then they are going to use their private keys to multiple the swapped points to get a share point.
+    </P>
+    <h4>
+      Example
+    </h4>
+    <p class="example">
+      Y^2=X^3 +9X +5 mod 13<br>
+      P = (4,1)<br>
+      secret keys -> a = 2 and b = 4<br>
+      2P = (8,2)  and  4P = (9,3)<br> 
+      swap keys <br>
+      2(9,3) = (4,12) and 4(8,2) = 2(9,3) = (4,12)<br><br>
+      As you can see both Alice and Bob have a shared key!
+
+    </p>
+    <h2>ElGamal Public key</h2> 
+    <p>
+      The ElGamal elliptic curve is based on ElGamal public key exchange but is converted into an elliptic curve. The main difference 
+      is that this system is more secure due to elliptic curves buying a lot harder to solve for than either factoring or solving a 
+      discreet log problem, even if it based on discreet log problems. This system works by have an agreed on elliptic curve, prime p used 
+      to module the curve, and a point P. Alice is then going to come up with some number na and is going to use that to multiply 
+      P by it to get Q. Alice sends Q over to Bob. Bob come up with a k and a point M which is the message and computes c1 = k*P and 
+      c2 = M+k*Q. Bob sends c1 and c2 back to Alice. Alice can use the inverse of na to find the M by c1*na^-1 +c2 = M.
+    </p>
+    <h4>Example </h4>
+    <p class="example">
+      public information <br>
+      Y^2 = X^3+13X+37 mod 7331<br>
+      P=(101,6124)<br><br>
+
+      Alice<br>
+      private key: 123 = na<br>
+      public key: 123*(101,6124) = (6884,150) = Q<br><br>
+
+      Bob<br>
+      private key: 137 = k<br>
+      private message: (313,2634) = M<br>
+      c1 = k*P = 137*(101,6124) =(3107,624)<br>
+      c2 = M + k*Q = (313,2634) + 137*(6884,150) = (2761,3470)<br>
+      c1 and c2 are sent to Alice <br><br>
+
+      Alice decryption<br>
+      c2+c1*-na = (2761,3470)+(3107,624)123^-1 = (313,2634) <br> <br>
+
+      As you can see Alice got the private message that Bob came up with.
+      Some things to note, M has to be a valid point on the curve 
+      and so does P. 
+    </p>
+    <h2>Elliptic Curve Digital Signature Algorithm</h2>
+    <P> This is the encryption algorithm that bitcoin and 
+      Ethereum use to show ownership the currency. This is based off the 
+      DSA algorithm which was not covered on this website. A digital signature is a few extra 
+      bits of information added to some document that can be verified to show 
+      that you either own it or that it is a legitimate document.<br>
+      The algorithm:
+      <div class="example">
+      <ul>
+        <li>starts with an elliptic curve mod p that has an order Q (Q is prime) </li>
+        <li>Get a point G on the curve, G is public</li>
+        <li> G*Q gets you a point at infinity(cycle)</li>
+        </ul>
+        <ul>
+          <li>Alice</li>
+        <li>is then going to create a signing key s</li>
+        <li>create point V = s*G</li>
+        <li>create a document d < Q</li>
+        <li>create one time key e < Q</li>
+        <li>e*G is calculated</li>
+        <li>s1 = x mod Q, x being the x from e*G</li>
+        <li> s2 = (d *s *s1) e^-1 mod  Q</li>
+        <li>send s1,s2,V, and d to Bob</li>
+      </ul> 
+      <ul>
+        <li>Bob:</li>
+        <li>makes v1 = d *s2^-1 mod  Q</li>
+        <li>makes v2 = s1 *s2^-1 mod  Q</li>
+        <li> Pos Valid=G*v1 + V*v2 </li>
+        <li>if the x value of Pos Valid mod Q is the s1 value, it is valid</li>
+      </ul>
+      </div>
+      <!-- starts with an eleptic curve mod p that has an order Q, Q being prime 
+      and order in this context is the amount of times a certain point can be added to itself to 
+      get a point at infity, i.e the end of a cycle. Then there is going to be 
+      a point G that is known. Alice is then going to create 
+      a signing key s and create point V = s*G. Alice then 
+      creates a document d and a one time key e both less than the order of Q.
+      e*G is calculates the x from that is used to calculate
+      s1 = x mod order Q, then with s1 we calculate s2 = (d *s *s1) e^-1 mod q(q being order of Q).
+      Alice then sends s1,s2,V, and d to Bob. Bob makes a v1 and v2,
+      v1 = d *s2^-1 mod q and v2 = s1 *s2^-1 mod q. Bob then calculates 
+      G*v1 + V*v2 and if the x mod q is equal to s1, it is a 
+      good signature. -->
+    </P>
+    <h4>Example</h4>
+    <p class="example">
+      public:<br>
+      y^2 = x^3 +13x+37 mod 7331<br>
+      q=101<br>
+      G=(6851,1963)<br><br>
+
+      Alice:<br>
+      s=42<br>
+      s*G = V=(3637,1716)<br>
+      d =42 <br>
+      e=11 <br>
+      e*g = (2710,5987)<br>
+      s1 =2710 mod 101 = 84<br>
+      s2 = (d+s*s1) e^-1 mod q = (42+42*84) 11^-1 mod q = 95<br>
+      Alice sends s1, s2, d, and V to Bob<br><br>
+
+      Bob:<br>
+      v1 = d* s2^-1 mod q <br>
+      v2 = s1 *s2^-1 mod q <br>
+      G*v1 + V*v2 = (2701, 4566) + (4894,125) -> grab x <br>
+      x mod q = 84 =s1  <br><br>
+      Since our x value from G*v1 +V*v2 is equal to the 
+      s1 that Alice sent, that means the signature is valid. 
+      The numbers are relatively low and is easy to brute force 
+      your way into getting the s value, allowing you to forge
+      signatures but NIST has recomondations for curves that 
+      would mitigate this.
+    </p>
+
+
+
+
+
+    <footer>
+        <ul>
+          <li>
+            <a href="https://www.geeksforgeeks.org/blockchain-elliptic-curve-cryptography/">Geeks for Geeks overview</a>
+          </li>
+          <li>
+            <a href="https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-186.pdf">NIST recommended curves pdf</a>
+          </li>
+          <li>
+            <a href=" https://www.keyfactor.com/blog/elliptic-curve-cryptography-what-is-it-how-does-it-work/">Basics of elliptic curve</a>
+          </li>
+        </ul>
+        <ul>
+          <li>
+            <a href="https://blog.cloudflare.com/a-relatively-easy-to-understand-primer-on-elliptic-curve-cryptography">Cloudflare: intro to elliptic curve</a>
+          </li>
+         
+        </ul>
+       
+      </footer>
+</body>
+
+
+
+</html>

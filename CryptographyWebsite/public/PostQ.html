@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link type="text/css" rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1" >
+    <title>PostQ</title>
+    <script src="main.js" defer></script>
+
+</head>
+
+<header>
+  <nav class="horizontal-scroll">
+      <ul>
+          <li> <a href="index.html">Home </a> </li>
+          <li> <a href="Background.html">Early Cryptography </a> </li>
+          <li> <a href="keyExchange.html">Symmetric Key Exchange </a> </li>
+          <li> <a href="publicKey.html">Public Key </a> </li>
+          <li> <a href="ElipticCurve.html">Elliptic Curve </a> </li>
+          <li> <a href="PostQ.html">Post Quantum  </a> </li>
+      </ul>
+  </nav>
+</header>
+
+<body>
+    
+    <h1> Overview</h1>
+    <p class="info"> 
+        Post Quantum cryptography is fairly new in terms of cryptography and has had most of its improvements done in the 
+        late 2010's. Most of the systems came about due to a competition that NIST hosted starting around 2017 to find the quantum proof cryptosystem.
+        The way each one of the systems is going to work is going to be based on linear algebra ideas as well as a 
+        new data structure called a lattice, named after the knitting technique. A lattice is kind of similar to how 
+        an elliptic curve works in the way that it is just a series of points based of some type of polynomial, but the 
+        difference is how they are going to be used. Most of the lattice-based systems are going to have their encryption based on 
+        placing a message into a point and slightly offsetting it, this allows the other person to know where the message is and 
+        it is incredibly hard for an interceptor to find the point that has the message.<br><br>
+        A lattice can be represented as a matrix times some vector and all results would be the lattice. In a 2D lattice with a 2x2 matrix A,
+        you could visualize all points as some combination of scalars a and b times columns of A<br>
+    </p >
+    <div class="example">
+        <div class="flex-container">
+          <p style="margin-right: 10px;">A=</p> 
+          <div class="inline-table">
+            <table>
+              <tr>
+                <td>x1</td>
+                <td>y1</td>
+              </tr>
+              <tr>
+                <td>x2</td>
+                <td>y2</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="flex-container">
+          <p style="margin-right: 5px;">a* </p>
+          <div class="inline-table">
+            <table>
+              <tr><td>x1</td></tr>
+              <tr><td>y1</td></tr>
+            </table>
+          </div>
+          <p class="operator">+</p>
+          <p style="margin-left: 5px; margin-right: 5px;">b* </p>
+          <div class="inline-table">
+            <table>
+              <tr><td>x2</td></tr>
+              <tr><td>y2</td></tr>
+            </table>
+          </div>
+          <p style="margin-left: 5px; margin-right: 10px;"> = </p>
+          <div class="inline-table">
+            <table>
+              <tr><td>x </td></tr>
+              <tr><td>y</td></tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    <p class="info">
+        <br> 
+        <img src=" https://www.esat.kuleuven.be/cosic/wp-content/uploads/2020/03/bases_small.gif" alt="Lattice gif">
+    With a and b being the elements of the vector.
+    <br> The lattice of this would be 
+    all possible combinations of the above function. What is done in the crypto system is 
+    that a secret key is going to be used to go to a specific point 
+    and the other person is going to add their message to secret key (the point) 
+    and then the person who knows the secret key can then uncover the message. It is hard 
+    to find the secret key because in order to find it, you would have to solve to find 
+    the closest point which is extremely hard when the points 
+    are close together. 
+      </p>
+   
+    <h2>NTRU</h2>
+    <P class="info">
+       NTRU is a runner up in the competition that NIST hosted that ran for years and had 4 rounds of filtering. NTRU is a 
+       cryptosystem that relies on linear algebra facts and is a public key cryptosystem like RSA(the most used public key system). 
+       The NTRU system starts with an Alice that has a public p and q, both are integers and q should be a lot larger than p for security. Then Alice 
+       is going to come up with some polynomial function f (x^7 +x^3 + x +1 ) with degree N-1, degree being the largest power in the polynomial 
+       function. Some things to note about f is that it needs to be invertible mod p and q, i.e. f*another polynomial function = 1 mod p and q. 
+       Alice will then compute fp which is the inverted f mod p, i.e. f *fp mod p = 1, and fq which is the inverted f mod q. She then 
+       chooses some other polynomial g with the same degree as f. Alice makes a public key h = g*fp mod q. So far what is public is N (degree of polynomial)
+       p and q(used for modulus), and public key h, that means fp, fq, g, and f. Bob is then going to come up with a message M which is a 
+       polynomial function and some random polynomial r. Bob will then compute the encryption variable e = (p*r *h +m )mod q. the 
+       e variable is sent back to Alice. Alice computes variable a = e*f mod q, then a*fp mod p = M 
+       
+    </P>
+    <h4> Example </h4>
+    <p class="example">
+      Alice:<br>
+      N=7 p =3 q=41 <br>
+      f= x^6+x^3 +x^2 -1<br> 
+      g = x^6 + x^4 - x^2 -x<br> 
+      fp = x^6 + 2x^5 +x^3 +x^2 +x +1 <br>
+      fq = 8x^6 + 26X^5 +31x^4 +21x^3 +40x^2 +2x +37 <br>
+      h = g*fp mod q =19x^6 + 38x^5 +6x^4 +32x^3 +24x^2 +37x +8 <br>
+      send h,p,q, and N<br><br>
+
+      Bob: <br>
+      M = -x^5 +x^3 +x^2 -x +1<br>
+      r = x^6 -x^5 +x -1 <br>
+      e = p*r*h + m mod q = 31*x^5 + 19*x^5 +4*x^4 +2*x^3 +40*x^2 +3*x +25 <br><br>
+
+      Alice:<br>
+      a = e* f mod q = x^6 +10*x^5 - 8*x^4 -x^3 -x^2 +x -1 <br>
+      fp*a mod p = -x^5 +x^3 +x^2 -x +1<br><br>
+    </p><p class="info">
+      Above you can see that Alice 
+      has got the message. Some things to note 
+      is that this process can fail depending on the 
+      format and numbers used, so fail safe bits 
+      should be added to the passes 
+      between Alice and Bob. 
+     </p>
+     <h2>CRYSTALS Kyber</h2>
+     <p class="info">
+      CRYSTALS kyber, also known as kyber, is a crypto system that relies on using matrix's 
+      with polynomials in them and then using some vector with polynomials in it to find a new 
+      vector that is going to be used to encrypt. A matrix is a rows * columns sized data structure 
+      that has a set of data in each row column combination, in our case a polynomial function. A vector is 
+      a rows by 1 column data structure that you can use to multiple a matrix in order to reduce its size into 
+      a rows by 1 collom data structure (vector). Kyber and Dithorium are the NIST supported post quantum methods
+      that shows in the competition. <br><br>
+
+      This algorithm works by first generating some sort of small 
+      polynomial function s, small in the way the numbers in front of each variable 
+      is reltivly small, whcih is going to be our private key.
+      We are going to need a q in which we will use for modulo later. 
+      Next to generate the public key, we need a Matrix A 
+      which is made up of polynomial equations  and we need a vector 
+      t. To make our vector t, we need to make a small 
+      error vector e. We will then make t by t= A*s +e. 
+      What this does is turns our matrix into a vector, and then 
+      we add a little error to the vector to make it harder to solve.
+      So our private stuff is our s, and e and the public key is the A matrix 
+      and the vector t (also the modulo variable q).<br><br>
+
+      The encryption works by first having two polynomial vectors 
+      e1 and r, e1 being another error vector and r being 
+      a random polynomial vector. Then we need an e2 which is a polynomial 
+      error equation. Then we get out message by turning what we want to send into 
+      a polynomial equation from binary representation, i.e. 1011 = 1*x^3 + 0*x^2 +1*x +1.
+      Then we are going to make the equation bigger by multiplying our message by 
+      q/2, i.e q/2 x^3 +q/2x +q/2. Then the cypher u = A^T(transpose) *r +e1 and v = t^t*r +e2 + m 
+      is created and sent over to be uncoded.<br><br>
+
+      With v and u you can do v-s^T * u =Mn. now 
+      we check each number in front of each of the x to see 
+      if it is closer to q,0, or q/2. If the number is closer 
+      to q or 0, turn that spot into a zero else turn it into a 1/2. 
+      Then factor out the q/2 and the inside of the polynomial should 
+      be the binary message.<br>
+       i.e. q/2 = 5 5x^4 + 0x^3 +3x^2 + 8x +7 -> 5x^4 + 0x^3 + 5x^2 +0x +5 -> 5*(1*x^4 +1*x^2 + 1) -> 10101
+      
+     </p>
+     <h4>Example</h4>
+     <p class="example">
+      Alice:<br>
+      
+      <!-- (vector) s = (-x^3-x^2+x,  -x^3-x)<br> -->
+      <div class="flex-container">
+        <p style="margin-right: 5px;">s = </p>
+        <div class="inline-table">
+          <table>
+            <tr><td>-x^3-x^2+x</td></tr>
+            <tr><td>-x^3-x</td></tr>
+          </table>
+        </div>
+      </div>
+      <p>
+      q=17<br>
+      let A be a 2x2 matrix that has random polynomials mod some q be as follows:<br></p>
+      <!-- A[0][0] =  6x^3+16x^2+16x+11<br>
+      A[0][1] = 9x^3+4x^2+6x+3 <br>
+      A[1][0] = 5x^3+3x^2+10x+1<br>
+      A[1][1] = 6x^3+x^2+9x+15<br> -->
+      <div class="flex-container">
+        <p style="margin-right: 10px;">A=</p> 
+        <div class="inline-table">
+          <table>
+            <tr>
+              <td>6x^3+16x^2+16x+11</td>
+              <td>9x^3+4x^2+6x+3</td>
+            </tr>
+            <tr>
+              <td>5x^3+3x^2+10x+1</td>
+              <td>6x^3+x^2+9x+15</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <!-- (vector) e = (x^2, x^2-x)<br> -->
+      <div class="flex-container">
+        <p style="margin-right: 5px;">e = </p>
+        <div class="inline-table">
+          <table>
+            <tr><td>x^2</td></tr>
+            <tr><td>x^2-x</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <div class="flex-container">
+        <p style="margin-right: 5px;">t = A*s+e =  </p>
+        <div class="inline-table">
+          <table>
+            <tr><td>16x^3+15x^2 +7</td></tr>
+            <tr><td>10^3+12^2+11x+6</td></tr>
+          </table>
+        </div>
+      </div>
+      <!-- t = A*s+e = (16x^3+15x^2 +7, 10^3+12^2+11x+6)<br><br> -->
+
+      <p>Bob:</p>
+      <!-- r = (-x^3+x^2, x^3+x^2-1)<br> -->
+      <div class="flex-container">
+        <p style="margin-right: 5px;">r=</p>
+        <div class="inline-table">
+          <table>
+            <tr><td>-x^3+x^2</td></tr>
+            <tr><td> x^3+x^2-1</td></tr>
+          </table>
+        </div>
+      </div>
+      <!-- e1 = (x^2 +x, x^2)<br> -->
+      <div class="flex-container">
+        <p style="margin-right: 5px;">e1=</p>
+        <div class="inline-table">
+          <table>
+            <tr><td>x^2 +x</td></tr>
+            <tr><td> x^2</td></tr>
+          </table>
+        </div>
+      </div>
+      <p>e2 = -x^3 -x^2<br>
+      binary message (1011) = 1x^3 +0x^2 +1x +1<br>
+      floor of q/2 = 9<br>
+      m = q/2 *binary message = 9*x^3 +9x+9<br></p>
+     <!-- (vector) u = A^t *r +e1 = (11x^3 +11x^2 +10x +3, 4x^3 +4x^2 +13x +11)<br> -->
+     <div class="flex-container">
+      <p style="margin-right: 5px;">u = A^t *r +e1 =</p>
+      <div class="inline-table">
+        <table>
+          <tr><td>11x^3 +11x^2 +10x +3</td></tr>
+          <tr><td> 4x^3 +4x^2 +13x +11</td></tr>
+        </table>
+      </div>
+    </div>
+     <p>  v = t^t *r +e2 +m = 7x^3+6x^2+8x+15<br><br>
+
+      Alice:<br>
+      Mn = v-s^t*u = 7x^3+14x^2+7x+5<br>
+      check Mn to check what each is close to<br>
+      9x^3 +0x^2 +9x + 9<br>
+      9(x^3 + x + 1)<br>
+      m=1011 <br><br></p>
+  </p>
+  <p class="info">
+      These numbers are extremely low, but they show the process. 
+      This might look like it is a lot of steps, but it can be done 
+      very fast by computers and does not take up that much space. 
+      For a comparison, elliptic curve crypto is the most storage 
+      efficient and is very fast and this algorithm can be performed 
+      faster than an elliptic curve system and takes up less space while 
+      also offering more bits of security.
+
+     </p>
+
+
+
+
+
+
+
+
+
+    <footer>
+        <ul>
+          <li>
+            <a href="https://www.amongbytes.com/post/20211017-gentle-introduction-to-ntru-1/">Among Bytes NTRU introduction</a>
+          </li>
+          <li>
+            <a href="https://shrek.unideb.hu/~tengely/crypto/section-8.html">NTRU introduction with Sage worksheet example</a>
+          </li>
+          <li>
+            <a href="https://www.ntru.org/f/hps98.pdf">NTRU offial pdf</a>
+          </li>
+        </ul>
+        <ul>
+          <li>
+            <a href="https://www.redhat.com/en/blog/post-quantum-cryptography-lattice-based-cryptography">Red Hat post quantum blog</a>
+          </li>
+          <li>
+            <a href="https://cryptopedia.dev/posts/kyber/">Kyber algorithm example</a>
+          </li>
+          <li>
+            <a href="https://www.youtube.com/watch?v=FUb75AUXMvw">Youtube video on Kyber</a>
+          </li>
+          <li>
+            <a href="https://eprint.iacr.org/2017/634.pdf">CRYSTALS kyber document pdf</a>
+          </li>
+          <li>
+            <a href="https://www.ibm.com/docs/en/zos/3.1.0">CRYSTALS kyber IBM</a>
+          </li>
+        </ul>
+       
+      </footer>
+</body>
+
+
+
+</html>
+

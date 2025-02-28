@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link type="text/css" rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1" >
+    <title>Public Key</title>
+    <script src="main.js" defer></script>
+</head>
+
+<header>
+  <nav class="horizontal-scroll">
+      <ul>
+          <li> <a href="index.html">Home </a> </li>
+          <li> <a href="Background.html">Early Cryptography </a> </li>
+          <li> <a href="keyExchange.html">Symmetric Key Exchange </a> </li>
+          <li> <a href="publicKey.html">Public Key </a> </li>
+          <li> <a href="ElipticCurve.html">Elliptic Curve </a> </li>
+          <li> <a href="PostQ.html">Post Quantum  </a> </li>
+      </ul>
+  </nav>
+</header>
+
+<body>
+    
+    <h1> Overview</h1>
+    <p> 
+       There are two people involved, one is the sender the other is the receiver, and the sender is going 
+       to send the receiver public keys that are generated from private keys that no one else should know.
+        The receiver will then add there message in some way and send it back to the sender and the sender 
+        can get the message. That is the general format for a public key exchange algorithm. You would 
+        use a public key exchange, also known as an asymmetric key exchange, when there is no prier relationship 
+        set up.
+    </p>
+    <h2>Knapsack Algorithms</h2>
+    <P>
+        The first generalized public key exchange is Knapsack, which was created in 1978. The way the 
+        exchange works is that the sender in this is going to have a list of supersending numbers 
+        such as {1,2,4,8,16,32}. supersending numbers are a list of numbers that each entry is bigger than 
+        all the previous entries added up. The sender then comes up with public key m and n. m is the number
+        that you are going to use for modulus, and m must be bigger than all numbers in the list added up,
+        so, for our example, it would have to be bigger than 1+2+4+8+16+32 = 63. The number n is going to
+        be the value we multiple all values in our list by. Then, once we have out n and m, we multiply each
+        entry in the list by n and then mod it by m.
+    </P>
+    <h4>example</h4>
+    <p class="example">
+      list: {1,2,4,8,16,32} m:67  n:24
+      <br><br>
+      1*24 mod 67 = 24 <br>
+      2*24 mod 67 = 48<br>
+      4*24 mod 67 = 29<br>
+      8*24 mod 67 = 58<br>
+      16*24 mod 67 = 49<br>
+      32*24 mod 67 = 31<br><br>
+      Public Key knapsack = {24,48,29,58,49,31}
+
+    </p>
+    <P>
+      The next part of the process would be to encrypt our message. If our message is 100110111001001100 in binary, then we would have to the message
+      evenly in order to encrypt it. So, it would turn into 100110 111001 001100 so that we can encrypt it with our public key by 
+      using the numbers that correspond to a position where a 1 is at and at them together.</body>p>
+
+      <p class="example">
+      100110 = 24 + 58 + 49 = 131<br>
+      111001 = 24 + 48 + 29 +31= 132 <br>
+      001100 = 29 + 58 = 87 <br>
+      This mean our cypher text is 131,132,87
+    </P>
+    <p>
+      The receiver is going to get m and n as well as the cypher text and if they are a trusted user, they have the private key already.
+      In order to decrypt our message we need to be able to find the inverse of n mod m, i.e. n * some number = 1 mod m.
+      There are a few ways to find the inverse of a number, one being the extended euclidean algorithm, but most calculators and programing languages 
+      can find the inverse of a number easily, so I am not going to write out all steps on how to get an inverse.
+      In the example case we have been working with, 24 * 14 mod 67 = 1, thus the inverse of n is 14.<br>
+      With the inverse we can decrypt our the cypher text into addition of the original private key of {1,2,4,8,16,32}.</html>p>
+
+      <p class="example">
+
+        131*14mod 67 = 25 = 16+8+1 = 100110<br>
+        132*14mod 67 = 39 = 32+4+2+1 = 111001<br>
+        87*14mod 67 = 12 = 8+4 = 001100<br><br>
+        As you can see, this is the orginal message before
+        being encrypted. In this example, you did not need the private
+        key, if you found the inverse of n, you could have solved for the private key 
+        like the above way.
+
+    </p>
+    <p>
+      In order to make a secure knapsack, you need a list of the size of at least 250 and each item should 
+      be between 200-400 bits long and the m should be about 100-200 bits long. Most real implementations of 
+      this algorithm uses random numbers for these values. If someone were to try solve by brute force with the
+      method mentioned, it would take till the heat death of the universe to solve, even in parallel.<br>
+      This is one of the only public key exchanges that is able to hold its own against quantum computing 
+      since it does not rely on  factoring large integers or computing discrete logarithms. It is not used 
+      very much but it could still be used. 
+    </p>
+    <h2>RSA</h2>
+    <P>
+        Named after the three inventors- Ron Rivest, Adi Shamir, and Leonard Adleman, RSA is a public key
+        exchange that has withstood the test of times and has been used since 1977. RSA security is based
+        the number you use to modulo your data since the number is a factor of two large prime numbers, 
+        and since it is hard to factor the numbers, you have security in you number.<br>
+        The way a message is encrypted is by first choosing your n to be a factor two large primes 
+        that are close together, to make it harder to try and factor. Then you split your message into blocks 
+        smaller than your n and then raise each of those blocks to a some power less than n and modulo them n.
+        the cypher is message^ some number mod n.<br>
+        The receiver can decrypt the message if he know the exponent since the receiver can find 
+        the inverse of the exponent and raise the cypher text to it and ge the original message back.
+    </P>
+    <h4> example</h4>
+    <p class="example">
+      p = 71   q=47 (both are prime)<br>
+      n= p*q = 3337<br>
+      (p-1) *(q-1)  = 70*46 = 3220 our exponent should not have a common factor with 3220<br>
+      e = 79  and 79 has no common factor with 3220<br>
+      d = e^-1 mod (p-1)*(q-1)<br>
+      d = 79^-1 mod 3220 = 1019<br>
+      message =688232687<br><br>
+      encryption<br><br>
+      m1= 688<br>
+      m2 = 232<br>
+      m3 = 687<br>
+      c1 = m1 ^ e mod n = 688^79 mod 3337 = 1570<br>
+      c2 = m2 ^ e mod n = 232^79 mod 3337 = 2756<br>
+      c3 = m3 ^ e mod n = 687^79 mod 3337 = 2091<br>
+      c = 1570 2756 2091 <br><br>
+      decryption<br><br>
+      c1 ^d mod n = m1 = 1570^1019 mod 3337 = 688 <br>
+      c2 ^d mod n = m2 = 2756^1019 mod 3337 = 232 <br>
+      c3 ^d mod n = m3 = 2091^1019 mod 3337 = 687 <br>
+    </p>
+    <P>
+      As you can see, if we did not know how to factor n, this would be harder to solve.
+      The security is the fact that n is hard to factor and that if can not factor it,
+      you can not decrypt it because you need p-1 and q-1 in order to find the inverse of
+      e. You can still use this system and NIST has recommended n's that you should use 
+      but they are huge numbers. To be secure, s needs to be at least 2048 bits long according to NIST.<br>
+      there were two offsets that came from RSA that became known after this, One is Pohlig Hellman encryption 
+      and the other is Rabin's scheme. Pohlig Hellman is the same thing as RSA except in the information
+      that is shared. Pohlig does not share the n as part of the public key, this leads to a difficult problem
+      of e = logp(C) mod n with C being the cypher text. Rabin scheme had its primes be equal to 
+      3 mod 4 and they are still prime, and then the message is always squared. Because of P and Q being 
+      prime and equal to 3 mod 4, you can not solve it simply and instead have to work out a Chinese remainder 
+      theorem problem where you have 4 possible answer per bit of message. decryption looks a little like: </p>
+      <p class="example">
+      possible m = C^(p-1/4)mod p<br> 
+      possible m =p-C^(p-1/4)mod p<br> 
+      possible m =q-C^(q-1/4)mod q<br> 
+      possible m =q-C^(q-1/4)mod q<br> 
+      <br> Then you have to find the inverse of p and q and make an a and a b variable 
+      being a = p*(p^-1 mod q) and b = q*(q^-1 mod p). Once you have those, you can find your 
+      actual possible m. <br><br>
+      pos M1 = (a*m1 + b*m3)mod n<br>
+      pos M1 = (a*m1 + b*m4)mod n<br>
+      pos M1 = (a*m2 + b*m3)mod n<br>
+      pos M1 = (a*m2 + b*m4)mod n<br><br>
+      It is not a fast process but it is relatively secure depending on the numbers used.
+    </P>
+    <h2>ElGamal</h2>
+    <p>
+      ElGamal is an asymmetric key encryption. The difficulty of this system comes from 
+      finding discrete logarithm in a cycle group, a cycle group is all numbers that can come from a modulo,
+      that is even if we know g^a and g^b, it is difficult to compute g^ab.<br>
+      The way the encryption works is that a q is going come up with a number q with a cycle F.
+      He is going to choose two numbers a and b from the cycle group F such that the
+      greatest common factor of a and q is 1, meaning that they are coprime. Then the public key is
+      is b^a, F,q and b and leaving a to be private. This is what the recever is going to do before
+      any encryption is done.<br><br>
+      The sender is going to select an element k from F such that the greatest common factor of
+      k and q is 1. Then the sender gets a p = b^k and 
+      s = b^ak. The message M is then multiplied by s and send out
+      p,M*s = b^k, M* b^ak<br><br>
+      The receiver is then going to calculate p^a = 
+      g^ak and then devides the message M*s by g^ak 
+      which will get you just the message M since 
+      s = g^ak<br><br>
+      This system is similar to RSA but relies on discreet log being hard 
+      compared to RSA relying on factoring to be hard.
+    </p>
+
+
+
+
+
+
+
+
+
+
+
+    <footer>
+        <ul>
+          <li>
+            <a href="https://www.geeksforgeeks.org/knapsack-encryption-algorithm-in-cryptography/">Geeks for Geeks Knapsack</a>
+          </li>
+          <li>
+            <a href="https://www.geeksforgeeks.org/rsa-algorithm-cryptography/">Geeks for Geeks RSA</a>
+          </li>
+          <li>
+            <a href="https://mrajacse.wordpress.com/wp-content/uploads/2012/01/applied-cryptography-2nd-ed-b-schneier.pdf">Applied Cryptography</a>
+          </li>
+        </ul>
